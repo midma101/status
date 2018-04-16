@@ -1,0 +1,56 @@
+<header class="tc pv4 pv5-ns">
+  <img src=<%= asset_path 'black_welogo.jpg' %> class="br-100 pa1 ba b--black-10 h3 w3" alt="avatar">
+  <h1 class="f5 f4-ns fw6 mid-gray">WeWork Microservice Status Page</h1>
+  <h2 class="f6 gray fw2 ttu tracked">Bringing visibility to an unstable world.</h2>
+</header>
+<div class="pa4">
+  <div class="overflow-auto">
+    <table class="f6 w-100 mw8 center" cellspacing="0">
+      <thead>
+      <tr>
+        <th class="fw6 bb b--black-20 tl pb3 pr3 bg-white">App</th>
+        <th class="fw6 bb b--black-20 tl pb3 pr3 bg-white">Overall Status</th>
+        <th class="fw6 bb b--black-20 tl pb3 pr3 bg-white">Pending Migrations</th>
+        <th class="fw6 bb b--black-20 tl pb3 pr3 bg-white">Sidekiq</th>
+        <th class="fw6 bb b--black-20 tl pb3 pr3 bg-white">Rabbitmq</th>
+      </tr>
+      </thead>
+      <tbody class="lh-copy">
+      <% @checks.each do |check_name, check_data| %>
+        <% details = check_data["details"]%>
+        <% check_failed = check_data["status"] == "fail" %>
+        <tr>
+          <td class="pv3 pr3 bb b--black-20"><%= check_name.humanize %></td>
+          <% if check_failed || details == nil %>
+            <td class="pv3 pr3 bb b--black-20"><span class="fail_circle"></span></td>
+            <td class="pv3 pr3 bb b--black-20"></td>
+            <td class="pv3 pr3 bb b--black-20"></td>
+            <td class="pv3 pr3 bb b--black-20"></td>
+          <% else %>
+            <% active_record_pass = details["active_record_migrations"]["status"] == "pass" %>
+            <% sidekiq_pass = details["sidekiq"]["status"] == "pass" %>
+            <% rabbitmq_pass = details["rabbitmq"]["status"] == "pass" %>
+
+            <td class="pv3 pr3 bb b--black-20"><span class="success_circle"></span></td>
+            <% if active_record_pass %>
+              <td class="pv3 pr3 bb b--black-20"><span class="success_circle" ></span></td>
+            <% else %>
+              <td class="pv3 pr3 bb b--black-20"><span class="fail_circle" ></span></td>
+            <% end %>
+            <% if sidekiq_pass %>
+              <td class="pv3 pr3 bb b--black-20"><span class="success_circle" ></span></td>
+            <% else %>
+              <td class="pv3 pr3 bb b--black-20"><span class="fail_circle" ></span></td>
+            <% end %>
+            <% if rabbitmq_pass %>
+              <td class="pv3 pr3 bb b--black-20"><span class="success_circle" ></span></td>
+            <% else %>
+              <td class="pv3 pr3 bb b--black-20"><span class="fail_circle" ></span></td>
+            <% end %>
+          <% end %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
